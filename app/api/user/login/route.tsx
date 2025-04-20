@@ -5,7 +5,8 @@ import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
 
 const prisma = new PrismaClient();
-const JWT_SECRET = '$ecret&key'; // Replace with a secure secret key
+const JWT_SECRET = '$ecret&key'; // this secret key is mock key, it would be changed in production
+// In production, use a more secure key and store it in an environment variable
 
 export async function POST(request: Request) {
     try {
@@ -34,6 +35,12 @@ export async function POST(request: Request) {
         }
 
         // Generate JWT
+        // it will expire in 1 hour after login
+        // this token will be used to authenticate the user in the next requests
+        // it will be stored in the cookie
+        // the cookie will be sent to the client
+        // the client will send the cookie in the next requests
+        // the server will verify the token and authenticate the user
         const token = jwt.sign({ id: getuser.id, email: getuser.email }, JWT_SECRET, { expiresIn: '1h' });
 
         // Set cookie
