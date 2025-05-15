@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
+import logger from '@/utils/logger';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = '$ecret&key'; // this secret key is mock key, it would be changed in production
@@ -15,6 +16,7 @@ export async function POST(request: Request) {
 
         // Validate input
         if (!email || !password) {
+            logger.error('Email and password are required', { email, timestamp: new Date() });
             return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
         }
 
@@ -25,12 +27,14 @@ export async function POST(request: Request) {
         });
 
         if (!getuser) {
+            logger.error('User not found', { email, timestamp: new Date() });
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
         const isPasswordValid = await bcrypt.compare(password, getuser.password);
 
         if (!isPasswordValid) {
+            logger.error('Invalid credentials', { email, timestamp: new Date() });
             return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
         }
 
@@ -54,9 +58,11 @@ export async function POST(request: Request) {
 
         const response = NextResponse.json({ message: 'Login successful', getuser }, { status: 200 });
         response.headers.set('Set-Cookie', cookie);
-
+        logger.info('User logged in successfully', { email: getuser.email, timestamp: new Date() });
         return response;
     } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        logger.error('Error during login', { error: errorMessage, timestamp: new Date() });
         return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
     }
 }

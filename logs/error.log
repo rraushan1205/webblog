@@ -1,0 +1,1 @@
+{"error":"\nInvalid `prisma.user.findUnique()` invocation:\n\n\nCan't reach database server at `ep-sparkling-firefly-a4yv3bo7-pooler.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-sparkling-firefly-a4yv3bo7-pooler.us-east-1.aws.neon.tech:5432`.","level":"error","message":"Error during login","timestamp":"2025-05-15T19:14:38.287Z"}
