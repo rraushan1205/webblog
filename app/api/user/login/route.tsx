@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
         const response = NextResponse.json({ message: 'Login successful', getuser }, { status: 200 });
         response.headers.set('Set-Cookie', cookie);
-        logger.info('User logged in successfully', { email: getuser.email, timestamp: new Date() });
+        logger.info('User logged in successfully', {id:getuser.id, email: getuser.email, timestamp: new Date() });
         return response;
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
