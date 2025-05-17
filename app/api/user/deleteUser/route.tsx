@@ -16,7 +16,6 @@ export async function DELETE(req: Request) {
         if (!user) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
-
         // Delete all posts by the user first
         await prisma.post.deleteMany({
             where: { authorId: id }

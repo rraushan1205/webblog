@@ -53,8 +53,8 @@ const AdminPage: React.FC = () => {
             try {
                 const response = await fetch("/a3q_hak/api/Admin");
                 const data = await response.json();
-                setPostCount(data.userCount || []);
-                setUserCount(data.postCount || []);
+                setPostCount(data.postCount || 0);
+                setUserCount(data.userCount || 0);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -127,7 +127,7 @@ const AdminPage: React.FC = () => {
                     <div className="flex flex-col items-center px-10">
                         <h2 className="text-[40px]">1\Post</h2>
                         <div className="text-[80px] self-center"> 
-                            {postCount || <Loader colours="red"/>}
+                            {postCount || <Loader/>}
                         </div>
                         <button className="px-1 text-[8px] py-[1px] bg-red-600 active:bg-red-800 hover:bg-red-400" onClick={managePost}>Manage</button>
                     </div>
@@ -135,7 +135,7 @@ const AdminPage: React.FC = () => {
                     <div className="s border-l-4 border-gray-100 px-10 flex flex-col items-center">
                     <h2 className="text-[40px]">2\User</h2>
                     <div className="text-[80px] self-center"> 
-                        {userCount || <Loader colours='blue'/>}
+                        {userCount || <Loader/>}
                     </div>
                     <button className="px-1 text-[8px] py-[1px] bg-red-600 active:bg-red-800 hover:bg-red-400" onClick={manageUser}>Manage</button>
                     </div>

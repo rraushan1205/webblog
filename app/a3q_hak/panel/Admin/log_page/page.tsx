@@ -1,9 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+type TooltipData = {
+  id: number;
+  name: string;
+  email: string;
+};
 
 type LogEntry = {
   id: string;
+  ip: string;
   email: string;
   level: string;
   message: string;
@@ -14,6 +20,33 @@ export default function LogsPage() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [tooltip, setTooltip] = useState<{
+    visible: boolean;
+    content: string;
+    x: number;
+    y: number;
+  }>({ visible: false, content: "", x: 0, y: 0 });
+
+  const handleHover = (log: LogEntry, e: React.MouseEvent) => {
+    setTooltip({
+      visible: true,
+      content: "Loading...",
+      x: e.clientX + 10,
+      y: e.clientY + 10,
+    });
+
+      setTooltip({
+        visible: true,
+        content: `Email: ${log.email}\nID: ${log.id}`,
+        x: e.clientX + 10,
+        y: e.clientY + 10,
+      });
+
+  };
+
+  const handleLeave = () => {
+    setTooltip({ visible: false, content: "", x: 0, y: 0 });
+  };
 
   useEffect(() => {
     fetch("/a3q_hak/api/Admin/log/fetch")
@@ -32,6 +65,24 @@ export default function LogsPage() {
   return (
     <div style={{ padding: 20 }}>
       <h2 style={{ marginBottom: 16 }}>🚀 Server Logs - Boss Mode</h2>
+      {tooltip.visible && (
+        <div
+          style={{
+            position: "fixed",
+            top: tooltip.y,
+            left: tooltip.x,
+            backgroundColor: "#333",
+            color: "#fff",
+            padding: "8px 10px",
+            borderRadius: "8px",
+            fontSize: "14px",
+            whiteSpace: "pre-line",
+            zIndex: 1000,
+          }}
+        >
+          {tooltip.content}
+        </div>
+      )}
       <table
         style={{
           width: "100%",
@@ -44,7 +95,7 @@ export default function LogsPage() {
         <thead>
           <tr>
             <th style={thStyle}>id</th>
-            <th style={thStyle}>Email</th>
+            <th style={thStyle}>ip</th>
             <th style={thStyle}>Level</th>
             <th style={thStyle}>Message</th>
             <th style={thStyle}>Timestamp</th>
@@ -58,8 +109,14 @@ export default function LogsPage() {
                 backgroundColor: idx % 2 === 0 ? "#2d2d2d" : "#252526",
               }}
             >
-              <td style={tdStyle}>{log.id}</td>
-              <td style={tdStyle}>{log.email}</td>
+              <td
+              style={tdStyle}
+              onMouseEnter={(e) => handleHover(log, e)}
+              onMouseLeave={handleLeave}
+            >
+              {log.id}
+            </td>
+              <td style={tdStyle}>{log.ip}</td>
               <td style={{ ...tdStyle, color: getLevelColor(log.level) }}>{log.level}</td>
               <td style={tdStyle}>{log.message}</td>
               <td style={tdStyle}>{new Date(log.timestamp).toLocaleString()}</td>
